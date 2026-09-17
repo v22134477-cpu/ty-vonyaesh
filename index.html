@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b18">
+
+<title>Ты воняешь 🌍</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    font-family: Arial, sans-serif;
+    color: white;
+
+    background:
+        radial-gradient(circle at 50% 0%, #303b78 0%, transparent 45%),
+        linear-gradient(160deg, #090b18, #11152b);
+
+    overflow: hidden;
+}
+
+.background {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+
+    background: rgba(90, 100, 255, 0.12);
+    filter: blur(80px);
+
+    animation: move 8s infinite alternate ease-in-out;
+}
+
+@keyframes move {
+    from {
+        transform: translate(-80px, -50px);
+    }
+
+    to {
+        transform: translate(80px, 50px);
+    }
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+
+    padding: 35px 22px 28px;
+
+    text-align: center;
+
+    background: rgba(15, 18, 40, 0.75);
+    border: 1px solid rgba(255,255,255,0.12);
+
+    border-radius: 28px;
+
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,0.5);
+}
+
+.title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    opacity: 0.5;
+    margin-bottom: 30px;
+}
+
+.flag {
+    font-size: 65px;
+    margin-bottom: 15px;
+
+    animation: float 3s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.phrase {
+    min-height: 130px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: clamp(34px, 9vw, 60px);
+    font-weight: 800;
+
+    line-height: 1.05;
+
+    text-shadow: 0 5px 30px rgba(100,130,255,0.35);
+
+    transition:
+        opacity 0.35s,
+        transform 0.35s;
+}
+
+.phrase.hide {
+    opacity: 0;
+    transform: translateY(15px);
+}
+
+.language {
+    margin-top: 10px;
+    margin-bottom: 28px;
+
+    font-size: 16px;
+    opacity: 0.55;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+button {
+    border: none;
+
+    padding: 14px 18px;
+
+    border-radius: 14px;
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    background: rgba(255,255,255,0.1);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s,
+        background 0.2s;
+}
+
+button:active {
+    transform: scale(0.94);
+}
+
+.next {
+    background: linear-gradient(135deg, #5865f2, #8b5cf6);
+}
+
+.hint {
+    margin-top: 22px;
+
+    font-size: 12px;
+    opacity: 0.35;
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="background"></div>
+
+<div class="card">
+
+    <div class="title">
+        🌍 ONE PHRASE • MANY LANGUAGES
+    </div>
+
+    <div id="flag" class="flag">🇷🇺</div>
+
+    <div id="phrase" class="phrase">
+        Ты воняешь
+    </div>
+
+    <div id="language" class="language">
+        Русский
+    </div>
+
+    <div class="buttons">
+
+        <button class="next" onclick="nextLanguage()">
+            Следующий →
+        </button>
+
+        <button onclick="speak()">
+            🔊 Озвучить
+        </button>
+
+    </div>
+
+    <div class="hint">
+        Фраза автоматически меняется каждые 4 секунды
+    </div>
+
+</div>
+
+
+<script>
+
+const languages = [
+
+    {
+        flag: "🇷🇺",
+        text: "Ты воняешь",
+        language: "Русский",
+        voice: "ru-RU"
+    },
+
+    {
+        flag: "🇺🇦",
+        text: "Ти смердиш",
+        language: "Украинский",
+        voice: "uk-UA"
+    },
+
+    {
+        flag: "🇨🇿",
+        text: "Smrdíš",
+        language: "Чешский",
+        voice: "cs-CZ"
+    },
+
+    {
+        flag: "🇸🇰",
+        text: "Smrdíš",
+        language: "Словацкий",
+        voice: "sk-SK"
+    },
+
+    {
+        flag: "🇵🇱",
+        text: "Śmierdzisz",
+        language: "Польский",
+        voice: "pl-PL"
+    },
+
+    {
+        flag: "🇬🇧",
+        text: "You stink",
+        language: "Английский",
+        voice: "en-US"
+    },
+
+    {
+        flag: "🇩🇪",
+        text: "Du stinkst",
+        language: "Немецкий",
+        voice: "de-DE"
+    },
+
+    {
+        flag: "🇫🇷",
+        text: "Tu pues",
+        language: "Французский",
+        voice: "fr-FR"
+    },
+
+    {
+        flag: "🇪🇸",
+        text: "Apestas",
+        language: "Испанский",
+        voice: "es-ES"
+    },
+
+    {
+        flag: "🇮🇹",
+        text: "Puzzi",
+        language: "Итальянский",
+        voice: "it-IT"
+    },
+
+    {
+        flag: "🇵🇹",
+        text: "Você fede",
+        language: "Португальский",
+        voice: "pt-PT"
+    },
+
+    {
+        flag: "🇳🇱",
+        text: "Je stinkt",
+        language: "Нидерландский",
+        voice: "nl-NL"
+    },
+
+    {
+        flag: "🇸🇪",
+        text: "Du luktar illa",
+        language: "Шведский",
+        voice: "sv-SE"
+    },
+
+    {
+        flag: "🇩🇰",
+        text: "Du lugter",
+        language: "Датский",
+        voice: "da-DK"
+    },
+
+    {
+        flag: "🇳🇴",
+        text: "Du lukter",
+        language: "Норвежский",
+        voice: "no-NO"
+    },
+
+    {
+        flag: "🇫🇮",
+        text: "Sinä haiset",
+        language: "Финский",
+        voice: "fi-FI"
+    },
+
+    {
+        flag: "🇭🇺",
+        text: "Büdös vagy",
+        language: "Венгерский",
+        voice: "hu-HU"
+    },
+
+    {
+        flag: "🇹🇷",
+        text: "Kokuyorsun",
+        language: "Турецкий",
+        voice: "tr-TR"
+    },
+
+    {
+        flag: "🇬🇷",
+        text: "Βρωμάς",
+        language: "Греческий",
+        voice: "el-GR"
+    },
+
+    {
+        flag: "🇷🇴",
+        text: "Miroși urât",
+        language: "Румынский",
+        voice: "ro-RO"
+    },
+
+    {
+        flag: "🇧🇬",
+        text: "Миришеш лошо",
+        language: "Болгарский",
+        voice: "bg-BG"
+    },
+
+    {
+        flag: "🇷🇸",
+        text: "Смрдиш",
+        language: "Сербский",
+        voice: "sr-RS"
+    },
+
+    {
+        flag: "🇭🇷",
+        text: "Smrdiš",
+        language: "Хорватский",
+        voice: "hr-HR"
+    },
+
+    {
+        flag: "🇸🇮",
+        text: "Smrdiš",
+        language: "Словенский",
+        voice: "sl-SI"
+    },
+
+    {
+        flag: "🇯🇵",
+        text: "君は臭い",
+        language: "Японский",
+        voice: "ja-JP"
+    },
+
+    {
+        flag: "🇰🇷",
+        text: "너 냄새나",
+        language: "Корейский",
+        voice: "ko-KR"
+    },
+
+    {
+        flag: "🇨🇳",
+        text: "你很臭",
+        language: "Китайский",
+        voice: "zh-CN"
+    },
+
+    {
+        flag: "🇮🇳",
+        text: "तुम बदबू मारते हो",
+        language: "Хинди",
+        voice: "hi-IN"
+    },
+
+    {
+        flag: "🇮🇱",
+        text: "אתה מסריח",
+        language: "Иврит",
+        voice: "he-IL"
+    },
+
+    {
+        flag: "🇸🇦",
+        text: "أنت تفوح منك رائحة كريهة",
+        language: "Арабский",
+        voice: "ar-SA"
+    },
+
+    {
+        flag: "🇮🇩",
+        text: "Kamu bau",
+        language: "Индонезийский",
+        voice: "id-ID"
+    }
+
+];
+
+
+let current = 0;
+
+
+function updateScreen() {
+
+    const phrase = document.getElementById("phrase");
+
+    phrase.classList.add("hide");
+
+    setTimeout(() => {
+
+        const item = languages[current];
+
+        document.getElementById("flag").textContent =
+            item.flag;
+
+        document.getElementById("phrase").textContent =
+            item.text;
+
+        document.getElementById("language").textContent =
+            item.language;
+
+        phrase.classList.remove("hide");
+
+    }, 250);
+}
+
+
+function nextLanguage() {
+
+    current++;
+
+    if (current >= languages.length) {
+        current = 0;
+    }
+
+    updateScreen();
+}
+
+
+function speak() {
+
+    const item = languages[current];
+
+    if (!("speechSynthesis" in window)) {
+
+        alert("Озвучка не поддерживается этим браузером.");
+
+        return;
+    }
+
+    speechSynthesis.cancel();
+
+    const speech =
+        new SpeechSynthesisUtterance(item.text);
+
+    speech.lang = item.voice;
+
+    speech.rate = 0.9;
+    speech.pitch = 1;
+
+    speechSynthesis.speak(speech);
+}
+
+
+// Автоматическая смена языка
+
+setInterval(() => {
+
+    nextLanguage();
+
+}, 4000);
+
+</script>
+
+</body>
+  </html>
